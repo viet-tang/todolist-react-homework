@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface Todo {
   text: string;
-  completed: string; // Change type to string
+  completed: string;
 }
 
 const LOCAL_STORAGE_KEY = 'todos';
@@ -33,8 +33,11 @@ const App: React.FC = () => {
 
   const toggleTodo = useCallback((index: number) => {
     setTodos((prevTodos) => {
-      let newTodos = [...prevTodos];
-      newTodos[index].completed = newTodos[index].completed === 'true' ? 'false' : 'true';
+      const newTodos = [...prevTodos];
+      newTodos[index] = {
+        ...newTodos[index],
+        completed: newTodos[index].completed === 'true' ? 'false' : 'true',
+      };
       return newTodos;
     });
   }, []);
@@ -43,11 +46,17 @@ const App: React.FC = () => {
     setTodos((prevTodos) => prevTodos.filter((_, i) => i !== index));
   }, []);
 
+  const clearAllTodos = useCallback(() => {
+    setTodos([]);
+  }, []);
+
   const filteredTodos = todos.filter(todo => {
     if (filter === 'all') return true;
     if (filter === 'active') return todo.completed === 'false';
     if (filter === 'completed') return todo.completed === 'true';
   });
+
+  const activeTodosCount = todos.filter(todo => todo.completed === 'false').length;
 
   return (
     <div className="container mt-5">
@@ -58,6 +67,8 @@ const App: React.FC = () => {
         <button className={`btn btn-outline-primary ${filter === 'active' ? 'active' : ''}`} onClick={() => setFilter('active')}>Active</button>
         <button className={`btn btn-outline-primary ${filter === 'completed' ? 'active' : ''}`} onClick={() => setFilter('completed')}>Completed</button>
       </div>
+      <p>{activeTodosCount} items left</p>
+      <button className="btn btn-danger mb-3" onClick={clearAllTodos}>Clear All</button>
       <TodoList todos={filteredTodos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
     </div>
   );

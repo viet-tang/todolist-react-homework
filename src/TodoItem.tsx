@@ -1,8 +1,9 @@
 import React from 'react';
+import { FaCheckSquare, FaSquare } from 'react-icons/fa';
 
 interface Todo {
   text: string;
-  completed: string; // Change type to string
+  completed: string;
 }
 
 interface TodoItemProps {
@@ -12,18 +13,13 @@ interface TodoItemProps {
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleTodo, deleteTodo }) => {
-  const handleToggle = (event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent event bubbling
-    toggleTodo();
-  };
-
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <span
         style={{ textDecoration: todo.completed === 'true' ? 'line-through' : 'none', cursor: 'pointer' }}
-        onClick={handleToggle}
+        onClick={(event) => { event.stopPropagation(); toggleTodo(); }}
       >
-        {todo.text}
+        {todo.completed === 'true' ? <FaCheckSquare /> : <FaSquare />} {todo.text}
       </span>
       <button className="btn btn-danger btn-sm" onClick={(event) => { event.stopPropagation(); deleteTodo(); }}>Delete</button>
     </li>
